@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Point Control Bar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f0f2f5;
+      --card-bg: #ffffff;
+      --card-radius: 12px;
+      --card-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      --bar-bg: #e0e0e0;
+      --bar-height: 20px;
+      --bar-radius: 10px;
+      --text-color: #333333;
+      --btn-font: 600 0.9rem 'Inter', sans-serif;
+      --btn-radius: 6px;
+      --btn-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      --positive-gradient: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+      --negative-gradient: linear-gradient(135deg, #f0932b 0%, #f5576c 100%);
+      --transition-speed: 0.3s;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 1rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--card-radius);
+      box-shadow: var(--card-shadow);
+      padding: 2rem;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 1.5rem;
+      font-size: 1.75rem;
+      font-weight: 600;
+    }
+
+    .bar-container {
+      background: var(--bar-bg);
+      height: var(--bar-height);
+      border-radius: var(--bar-radius);
+      overflow: hidden;
+      margin-bottom: 1rem;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: var(--bar-radius);
+      transition: width var(--transition-speed) ease, background var(--transition-speed) ease;
+    }
+
+    .points {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .btn {
+      font: var(--btn-font);
+      color: #fff;
+      padding: 0.75rem;
+      border: none;
+      border-radius: var(--btn-radius);
+      box-shadow: var(--btn-shadow);
+      cursor: pointer;
+      transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: var(--btn-shadow);
+    }
+
+    .btn.positive { background: var(--positive-gradient); }
+    .btn.negative { background: var(--negative-gradient); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Point Control</h1>
+    <div class="bar-container">
+      <div class="bar-fill" id="barFill"></div>
+    </div>
+    <div class="points" id="pointsDisplay">0</div>
+    <div class="buttons">
+        <button class="btn positive" data-value="1">+1 Points</button>
+        <button class="btn positive" data-value="3">+3 Points</button>
+        <button class="btn positive" data-value="5">+5 Points</button>
+        <button class="btn positive" data-value="10">+10 Points</button>
+        <button class="btn positive" data-value="25">+25 Points</button>
+        <button class="btn positive" data-value="50">+50 Points</button>
+        <button class="btn negative" data-value="-1">-1 Points</button>
+        <button class="btn negative" data-value="-5">-5 Points</button>
+      <button class="btn negative" data-value="-10">-10 Points</button>
+      <button class="btn negative" data-value="-15">-25 Points</button>
+      <button class="btn negative" data-value="-50">-50 Points</button>
+      <button class="btn negative" data-value="-100">-100 Points</button>
+      <!-- Copy any <button> here, set data-value and class="positive"/"negative" -->
+    </div>
+  </div>
+  <script>
+    (function() {
+      const bar = document.getElementById('barFill');
+      const display = document.getElementById('pointsDisplay');
+      const btns = document.querySelector('.buttons');
+      let points = 0;
+      const MIN = 0, MAX = 1000;
+
+      btns.addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        points = Math.max(MIN, Math.min(MAX, points + parseInt(btn.dataset.value, 10)));
+        update();
+      });
+
+      function update() {
+        display.textContent = points;
+        const pct = (points - MIN) / (MAX - MIN) * 100;
+        bar.style.width = pct + '%';
+        const hue = pct * 1.2; // 0 (red) → 120 (green)
+        bar.style.background = `hsl(${hue}, 70%, 50%)`;
+      }
+
+      update();
+    })();
+  </script>
+</body>
+</html>
